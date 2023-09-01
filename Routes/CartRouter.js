@@ -4,10 +4,153 @@ const { Cart } = require("../models/CartModel")
 
 const CartRouter = express.Router();
 
+
+/**
+ * @swagger
+ * tags:
+ *   name: Cart
+ *   description: Cart management endpoints
+ */
+
+/**
+ * @swagger
+ * /carts/add-to-cart/{productId}:
+ *   post:
+ *     summary: Add a product to the cart
+ *     description: Add a product to the user's cart.
+ *     tags: [Cart]
+ *     security:
+ *       - bearerAuth: []  # Use this to enable JWT authentication
+ *     parameters:
+ *       - in: path
+ *         name: productId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the product to add to the cart.
+ *     responses:
+ *       201:
+ *         description: Product added to cart successfully.
+ *       200:
+ *         description: Product is already in the cart.
+ *       500:
+ *         description: Something went wrong.
+ *       401:
+ *         description: Unauthorized - JWT token required.
+ */
+
+/**
+ * @swagger
+ * /carts/remove-from-cart/{productId}:
+ *   delete:
+ *     summary: Remove a product from the cart
+ *     description: Remove a product from the user's cart.
+ *     tags: [Cart]
+ *     security:
+ *       - bearerAuth: []  # Use this to enable JWT authentication
+ *     parameters:
+ *       - in: path
+ *         name: productId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the product to remove from the cart.
+ *     responses:
+ *       200:
+ *         description: Product removed from cart successfully.
+ *       404:
+ *         description: Product not found in cart.
+ *       500:
+ *         description: Something went wrong.
+ *       401:
+ *         description: Unauthorized - JWT token required.
+ */
+
+/**
+ * @swagger
+ * /carts/cart:
+ *   get:
+ *     summary: Get the user's cart
+ *     description: Retrieve the user's cart with added products.
+ *     tags: [Cart]
+ *     security:
+ *       - bearerAuth: []  # Use this to enable JWT authentication
+ *     responses:
+ *       200:
+ *         description: Successful response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/CartProduct'
+ *       404:
+ *         description: Cart is empty or not found.
+ *       500:
+ *         description: Something went wrong.
+ *       401:
+ *         description: Unauthorized - JWT token required.
+ */
+
+/**
+ * @swagger
+ * /carts/increase-quantity/{productId}:
+ *   post:
+ *     summary: Increase the quantity of a product in the cart
+ *     description: Increase the quantity of a product in the user's cart.
+ *     tags: [Cart]
+ *     security:
+ *       - bearerAuth: []  # Use this to enable JWT authentication
+ *     parameters:
+ *       - in: path
+ *         name: productId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the product to increase the quantity.
+ *     responses:
+ *       200:
+ *         description: Product quantity increased.
+ *       404:
+ *         description: Product not found in cart.
+ *       500:
+ *         description: Something went wrong.
+ *       401:
+ *         description: Unauthorized - JWT token required.
+ */
+
+/**
+ * @swagger
+ * /carts/decrease-quantity/{productId}:
+ *   post:
+ *     summary: Decrease the quantity of a product in the cart
+ *     description: Decrease the quantity of a product in the user's cart.
+ *     tags: [Cart]
+ *     security:
+ *       - bearerAuth: []  # Use this to enable JWT authentication
+ *     parameters:
+ *       - in: path
+ *         name: productId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the product to decrease the quantity.
+ *     responses:
+ *       200:
+ *         description: Product quantity updated.
+ *       404:
+ *         description: Product not found in cart.
+ *       500:
+ *         description: Something went wrong.
+ *       401:
+ *         description: Unauthorized - JWT token required.
+ */
+
+
 CartRouter.post('/add-to-cart/:productId', auth, async (req, res) => {
     try {
-        const userId = req.userData.userId; // Get the user ID from the auth middleware
-        const productId = req.params.productId; // Get the product ID from the route parameter
+        const userId = req.userData.userId; 
+        const productId = req.params.productId; 
 
         // Find the user's cart
         let cart = await Cart.findOne({ user: userId });
@@ -40,6 +183,7 @@ CartRouter.post('/add-to-cart/:productId', auth, async (req, res) => {
         res.status(500).json({ message: 'An error occurred' });
     }
 });
+
 CartRouter.delete('/remove-from-cart/:productId', auth, async (req, res) => {
     try {
         const userId = req.userData.userId; // Get the user ID from the auth middleware
@@ -76,11 +220,13 @@ CartRouter.get('/cart', auth, async (req, res) => {
         // Find the user's cart
         const cart = await Cart.findOne({ user: userId }).populate('products.product');
 
-        if (!cart) {
-            return res.status(404).json({ message: 'Cart not found' });
+        if (!cart || cart.products.length==0) {
+            return res.status(404).json({ message: 'Cart is empty' });
+        }else{
+            res.status(200).json(cart.products);
         }
-
-        res.status(200).json(cart.products);
+        
+        
     } catch (error) {
         res.status(500).json({ message: 'An error occurred' });
     }

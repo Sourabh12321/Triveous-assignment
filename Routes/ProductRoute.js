@@ -3,22 +3,120 @@ const { auth } = require("../auth/auth")
 const { Product } = require("../models/ProductModel")
 const ProductRouter = express.Router();
 
-// Assuming you have a Product model with fields: name, image, price, and type
+/**
+ * @swagger
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
 
+/**
+ * @swagger
+ * tags:
+ *   name: Products
+ *   description: Product management endpoints
+ */
+
+/**
+ * @swagger
+ * /products/AddProduct:
+ *   post:
+ *     summary: Add a new product
+ *     description: Add a new product with title, image, price, category, and availability.
+ *     tags: [Products]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               image:
+ *                 type: string
+ *               price:
+ *                 type: number
+ *               category:
+ *                 type: string
+ *               availablity:
+ *                 type: boolean
+ *     responses:
+ *       201:
+ *         description: Product added successfully.
+ *       500:
+ *         description: Something went wrong.
+ *       401:
+ *         description: Unauthorized - JWT token required.
+ */
+
+/**
+ * @swagger
+ * /products/product-types:
+ *   get:
+ *     summary: Get product categories
+ *     description: Retrieve distinct product categories.
+ *     tags: [Products]
+ *     responses:
+ *       200:
+ *         description: Successful response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 category:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *       500:
+ *         description: Something went wrong.
+ */
+
+/**
+ * @swagger
+ * /products/products:
+ *   get:
+ *     summary: Get products
+ *     description: Retrieve a list of products. You can filter by category using the `category` query parameter.
+ *     tags: [Products]
+ *     parameters:
+ *       - in: query
+ *         name: category
+ *         schema:
+ *           type: string
+ *         description: Optional category filter.
+ *     responses:
+ *       200:
+ *         description: Successful response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Product'
+ *       500:
+ *         description: Something went wrong.
+ */
 ProductRouter.post('/AddProduct', auth, async (req, res) => {
     try {
-        const { title, image, price, type } = req.body;
+        const { title, image, price, category } = req.body;
 
-        // Create a new product
+        
         const newProduct = new Product({
             title,
             image,
             price,
             category,
-            availablity,
+            
         });
 
-        // Save the product to the database
+        
         await newProduct.save();
 
         res.status(201).json({ message: 'Product created successfully' });
@@ -37,20 +135,56 @@ ProductRouter.get('/product-types', async (req, res) => {
 });
 ProductRouter.get('/products', async (req, res) => {
     try {
-        const category = req.query.category; // Retrieve category from query parameter
-        console.log(category);
-        // Find products by category
-        const products = await Product.find({ "category": category });
-        res.status(200).json(products);
+        const category = req.query.category; 
+        
+        let products
+        
+        if(category){
+            products = await Product.find({ "category": category });
+            res.status(200).json(products);
+            console.log(category);
+            console.log("one")
+        }else{
+            console.log("all")
+            products = await Product.find();
+            res.status(200).json(products);
+        }
+        
+        
     } catch (error) {
         res.status(500).json({ message: 'An error occurred' });
     }
 });
+
+/**
+ * @swagger
+ * /products/product-info/{id}:
+ *   get:
+ *     summary: Get a product by ID
+ *     description: Retrieve a specific product by its ID.
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Successful response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *       500:
+ *         description: Something went wrong.
+ */
+
 ProductRouter.get('/product-info/:id', async (req, res) => {
     try {
         let id = req.params.id;
 
-        // Find products by category and user
+        
         const products = await Product.find({ "_id": id });
 
         res.status(200).json(products);

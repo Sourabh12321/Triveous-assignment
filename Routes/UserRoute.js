@@ -6,10 +6,85 @@ const jwt = require("jsonwebtoken");
 
 const UserRouter = express.Router();
 
+/**
+ * @swagger
+ * tags:
+ *   name: Users
+ *   description: User login signup
+ */
 
-UserRouter.get("/", (req, res) => {
-    res.send("user page")
-})
+/**
+ * @swagger
+ * /users/signup:
+ *   post:
+ *     summary: Register a new user
+ *     description: Register a new user with a name, email, and password.
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *             example:
+ *               name: John Doe
+ *               email: johndoe@example.com
+ *               password: secretPassword
+ *     responses:
+ *       200:
+ *         description: User registered successfully.
+ *       409:
+ *         description: User already registered with this email.
+ *       500:
+ *         description: Something went wrong.
+ */
+
+/**
+ * @swagger
+ * /users/login:
+ *   post:
+ *     summary: User login
+ *     description: Authenticate a user with email and password and return a JWT token.
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *             example:
+ *               email: johndoe@example.com
+ *               password: secretPassword
+ *     responses:
+ *       200:
+ *         description: User login successful.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 msg:
+ *                   type: string
+ *                 Token:
+ *                   type: string
+ *       401:
+ *         description: User not found or authentication failed.
+ *       500:
+ *         description: Something went wrong.
+ */
+
 
 UserRouter.post('/signup', async (req, res) => {
     try {
