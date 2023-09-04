@@ -6,8 +6,11 @@ const {ProductRouter} = require("./Routes/ProductRoute")
 const {OrderRouter} = require("./Routes/OrderRouter")
 const {connection} = require("./config/db")
 const swaggerUi = require("swagger-ui-express")
-const specs = require("./swagger");
+
 const app = express();
+
+const specs = require("./swagger");
+
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
