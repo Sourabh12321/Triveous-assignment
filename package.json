@@ -25,5 +25,9 @@
     "mongoose": "^7.5.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=14.20.1"
   }
+  
 }
