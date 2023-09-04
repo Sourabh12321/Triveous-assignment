@@ -2,6 +2,7 @@
 
 
 This is an API for managing the backend operations of an e-commerce website, encompassing functions such as user authentication, product management, cart management, and order processing.
+## Backend Deployed link :- https://triveous-assignment.onrender.com/
 
 ## Table of Contents
 
