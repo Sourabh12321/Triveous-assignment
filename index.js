@@ -20,7 +20,7 @@ app.use("/orders",OrderRouter)
 
 
 app.get("/",(req,res)=>{
-    res.send("home page")
+    res.send("Triveous home page")
 })
 
 app.listen(process.env.PORT,async()=>{
