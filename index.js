@@ -5,12 +5,13 @@ const {CartRouter} = require("./Routes/CartRouter")
 const {ProductRouter} = require("./Routes/ProductRoute")
 const {OrderRouter} = require("./Routes/OrderRouter")
 const {connection} = require("./config/db")
+const cors = require("cors")
 const swaggerUi = require("swagger-ui-express")
 
 const app = express();
 
 const specs = require("./swagger");
-
+app.use(cors());
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
