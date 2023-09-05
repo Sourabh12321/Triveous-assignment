@@ -1,8 +1,5 @@
 const swaggerJsdoc = require('swagger-jsdoc');
-const path = require('path');
 
-// Define the absolute path to the directory containing your route files.
-const routesDir = path.resolve(__dirname, 'routes');
 const options = {
   swaggerDefinition: {
     openapi: '3.0.0', 
