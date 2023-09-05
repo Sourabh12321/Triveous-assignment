@@ -11,6 +11,11 @@ const options = {
       version: '1.0.0',
       description: 'Ecommerce-API',
     },
+    servers:[
+      {
+      url:"https://triveous-assignment-dh5v.onrender.com"
+      }
+    ]
   },
   apis: [`${routesDir}/*.js`], 
 };
